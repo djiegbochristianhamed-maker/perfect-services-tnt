@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Perfect Services TNT — Réservation de créneau</title>
+<style>
+  :root{
+    --navy-deep:#0a1626;
+    --navy-mid:#122442;
+    --navy-soft:#1c3153;
+    --gold:#c9a13b;
+    --gold-light:#e9cf82;
+    --gold-dark:#8a6a1f;
+    --cream:#f7f2e6;
+    --ink:#1b2431;
+    --ink-soft:#5a6472;
+    --line:#e4dcc8;
+    --error:#b3432f;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(1200px 600px at 50% -10%, #1a2d4c 0%, var(--navy-deep) 55%),
+      var(--navy-deep);
+    min-height:100vh;
+    font-family:'Segoe UI', Inter, system-ui, -apple-system, sans-serif;
+    color:var(--ink);
+    padding:28px 14px 60px;
+  }
+
+  .sheet{
+    max-width:560px;
+    margin:0 auto;
+    background:var(--cream);
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow:0 30px 70px rgba(0,0,0,0.45), 0 0 0 1px rgba(201,161,59,0.25);
+  }
+
+  /* ---------- HEADER ---------- */
+  .header{
+    position:relative;
+    background:linear-gradient(160deg, var(--navy-deep) 0%, var(--navy-mid) 60%, var(--navy-soft) 100%);
+    padding:30px 26px 26px;
+    overflow:hidden;
+  }
+  .header::after{
+    content:"";
+    position:absolute;
+    right:-60px; top:-90px;
+    width:260px; height:260px;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 35%, var(--gold-light), var(--gold) 55%, var(--gold-dark) 100%);
+    opacity:0.9;
+    filter: drop-shadow(0 0 30px rgba(201,161,59,0.35));
+  }
+  .brand-row{
+    position:relative;
+    z-index:2;
+    display:flex;
+    align-items:center;
+    gap:14px;
+  }
+  .logo-badge{
+    flex:0 0 auto;
+    width:58px;height:58px;
+    border-radius:50%;
+    background:linear-gradient(160deg, var(--gold-light), var(--gold-dark));
+    display:flex;align-items:center;justify-content:center;
+    font-family:Georgia, 'Times New Roman', serif;
+    font-weight:900;
+    font-size:28px;
+    color:var(--navy-deep);
+    box-shadow:0 4px 14px rgba(0,0,0,0.35);
+  }
+  .brand-text{color:var(--cream);}
+  .brand-text .name{
+    font-size:20px;
+    font-weight:800;
+    letter-spacing:0.5px;
+    line-height:1.15;
+    text-transform:uppercase;
+  }
+  .brand-text .name span{color:var(--gold-light);}
+  .brand-text .tag{
+    font-size:11px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    color:var(--gold-light);
+    opacity:0.85;
+    margin-top:2px;
+  }
+
+  .services-row{
+    position:relative; z-index:2;
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px 14px;
+    margin-top:18px;
+    padding-top:16px;
+    border-top:1px solid rgba(233,207,130,0.25);
+  }
+  .services-row span{
+    font-size:10.5px;
+    letter-spacing:0.6px;
+    color:var(--gold-light);
+    text-transform:uppercase;
+    opacity:0.9;
+  }
+
+  /* ---------- TITLE BAND ---------- */
+  .title-band{
+    background:linear-gradient(90deg, var(--gold-dark), var(--gold) 45%, var(--gold-light));
+    padding:16px 26px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  .title-band .icon{
+    width:34px;height:34px;
+    border-radius:50%;
+    background:var(--navy-deep);
+    color:var(--gold-light);
+    display:flex;align-items:center;justify-content:center;
+    font-size:16px;
+    flex:0 0 auto;
+  }
+  .title-band h1{
+    margin:0;
+    color:var(--navy-deep);
+    font-size:17px;
+    line-height:1.25;
+    text-transform:uppercase;
+    letter-spacing:0.4px;
+  }
+  .title-band h1 small{
+    display:block;
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:0.6px;
+    opacity:0.75;
+  }
+
+  .intro{
+    padding:18px 26px 4px;
+    font-size:13.5px;
+    color:var(--ink-soft);
+    line-height:1.5;
+  }
+
+  /* ---------- FORM ---------- */
+  form{padding:6px 26px 0;}
+
+  .section-label{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:var(--navy-deep);
+    color:var(--cream);
+    font-size:12px;
+    letter-spacing:0.8px;
+    text-transform:uppercase;
+    font-weight:700;
+    padding:9px 14px;
+    border-radius:8px;
+    margin:22px 0 16px;
+  }
+  .section-label .dot{
+    width:7px;height:7px;border-radius:50%;
+    background:var(--gold-light);
+    flex:0 0 auto;
+  }
+
+  .field{
+    margin-bottom:16px;
+  }
+  .field label{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:13px;
+    font-weight:700;
+    color:var(--ink);
+    margin-bottom:6px;
+  }
+  .field label .req{color:var(--error); font-weight:700;}
+  .field .glyph{
+    width:20px;height:20px;
+    border-radius:50%;
+    background:var(--navy-soft);
+    color:var(--gold-light);
+    font-size:11px;
+    display:flex;align-items:center;justify-content:center;
+    flex:0 0 auto;
+  }
+
+  input, select, textarea{
+    width:100%;
+    padding:11px 13px;
+    border-radius:9px;
+    border:1.5px solid var(--line);
+    background:#fffdf8;
+    font-size:14.5px;
+    font-family:inherit;
+    color:var(--ink);
+    outline:none;
+    transition:border-color .15s, box-shadow .15s;
+  }
+  input:focus, select:focus, textarea:focus{
+    border-color:var(--gold);
+    box-shadow:0 0 0 3px rgba(201,161,59,0.18);
+  }
+  textarea{resize:vertical; min-height:70px;}
+
+  .error-msg{
+    display:none;
+    color:var(--error);
+    font-size:12px;
+    margin-top:5px;
+    font-weight:600;
+  }
+  .field.invalid input,
+  .field.invalid select{border-color:var(--error); box-shadow:0 0 0 3px rgba(179,67,47,0.12);}
+  .field.invalid .error-msg{display:block;}
+
+  .two-col{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+  }
+  @media (max-width:420px){
+    .two-col{grid-template-columns:1fr;}
+  }
+
+  /* ---------- NOTE BOXES ---------- */
+  .note{
+    display:flex;
+    gap:10px;
+    align-items:flex-start;
+    background:#fff;
+    border:1px solid var(--line);
+    border-left:4px solid var(--gold);
+    border-radius:8px;
+    padding:12px 14px;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    line-height:1.5;
+    margin:20px 0;
+  }
+  .note.warn{border-left-color:var(--error);}
+  .note .glyph{
+    width:22px;height:22px;border-radius:50%;
+    background:var(--navy-deep); color:var(--gold-light);
+    display:flex;align-items:center;justify-content:center;
+    font-size:12px; flex:0 0 auto; margin-top:1px;
+  }
+
+  /* ---------- SUBMIT ---------- */
+  .submit-zone{padding:6px 0 28px;}
+  button.send{
+    width:100%;
+    border:none;
+    cursor:pointer;
+    padding:16px 18px;
+    border-radius:12px;
+    background:linear-gradient(135deg,#25D366, #1aa851);
+    color:#fff;
+    font-size:15.5px;
+    font-weight:800;
+    letter-spacing:0.3px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    box-shadow:0 10px 24px rgba(37,211,102,0.35);
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  button.send:hover{transform:translateY(-1px); box-shadow:0 14px 30px rgba(37,211,102,0.42);}
+  button.send:active{transform:translateY(0);}
+  button.send svg{width:20px;height:20px;flex:0 0 auto;}
+
+  .subtext{
+    text-align:center;
+    font-size:11.5px;
+    color:var(--ink-soft);
+    margin-top:10px;
+  }
+
+  /* ---------- FOOTER ---------- */
+  .footer{
+    background:var(--navy-deep);
+    color:var(--cream);
+    padding:22px 26px 26px;
+    font-size:12.5px;
+    line-height:1.7;
+  }
+  .footer .gold{color:var(--gold-light); font-weight:700;}
+  .footer hr{
+    border:none;border-top:1px solid rgba(233,207,130,0.2);
+    margin:14px 0;
+  }
+  .footer .tagline{
+    text-align:center;
+    font-style:italic;
+    color:var(--gold-light);
+    opacity:0.9;
+    font-size:12px;
+    margin-top:6px;
+  }
+
+  /* success state */
+  .success-banner{
+    display:none;
+    margin:22px 26px 0;
+    background:#e9f7ee;
+    border:1px solid #b6e3c6;
+    color:#1e6b3c;
+    padding:12px 14px;
+    border-radius:9px;
+    font-size:13px;
+    font-weight:600;
+  }
+</style>
+</head>
+<body>
+
+<div class="sheet">
+
+  <div class="header">
+    <div class="brand-row">
+      <div class="logo-badge">P</div>
+      <div class="brand-text">
+        <div class="name">Perfect <span>Services TNT</span></div>
+        <div class="tag">L'expertise au service de votre confort</div>
+      </div>
+    </div>
+    <div class="services-row">
+      <span>📡 TNT</span>
+      <span>📺 Canal+</span>
+      <span>⚙ StarTimes</span>
+      <span>🔧 Fixation TV</span>
+      <span>🛠 Dépannage</span>
+    </div>
+  </div>
+
+  <div class="title-band">
+    <div class="icon">📅</div>
+    <h1>Fiche de réservation
+      <small>de créneau d'intervention</small>
+    </h1>
+  </div>
+
+  <div class="intro">
+    Merci pour votre confiance ! Remplissez le formulaire ci-dessous, puis appuyez sur le bouton
+    pour nous envoyer votre demande directement sur WhatsApp.
+  </div>
+
+  <div class="success-banner" id="successBanner">
+    ✅ Votre message est prêt — WhatsApp va s'ouvrir avec votre demande pré-remplie.
+  </div>
+
+  <form id="resForm" novalidate>
+
+    <div class="section-label"><span class="dot"></span> Informations client</div>
+
+    <div class="field" data-field="nom">
+      <label><span class="glyph">👤</span> Nom du client <span class="req">*</span></label>
+      <input type="text" id="nom" placeholder="Ex : Konan Yao Serge">
+      <div class="error-msg">Merci d'indiquer votre nom.</div>
+    </div>
+
+    <div class="field" data-field="tel">
+      <label><span class="glyph">📞</span> Téléphone <span class="req">*</span></label>
+      <input type="tel" id="tel" placeholder="Ex : 07 07 00 00 00">
+      <div class="error-msg">Merci d'indiquer un numéro de téléphone.</div>
+    </div>
+
+    <div class="field" data-field="adresse">
+      <label><span class="glyph">📍</span> Adresse d'intervention <span class="req">*</span></label>
+      <input type="text" id="adresse" placeholder="Ex : Cocody, Angré 7ème Tranche">
+      <div class="error-msg">Merci d'indiquer l'adresse d'intervention.</div>
+    </div>
+
+    <div class="field" data-field="service">
+      <label><span class="glyph">🔧</span> Service demandé <span class="req">*</span></label>
+      <select id="service">
+        <option value="">— Choisir un service —</option>
+        <option>Installation antenne TNT</option>
+        <option>Configuration décodeur Canal+</option>
+        <option>Configuration StarTimes</option>
+        <option>Fixation TV murale</option>
+        <option>Dépannage / réglage réception</option>
+        <option>Câblage électrique</option>
+        <option>Installation caméra de sécurité</option>
+        <option>Pose fil concertina</option>
+        <option>Autre (à préciser dans les notes)</option>
+      </select>
+      <div class="error-msg">Merci de choisir un service.</div>
+    </div>
+
+    <div class="two-col">
+      <div class="field" data-field="date">
+        <label><span class="glyph">📆</span> Date souhaitée <span class="req">*</span></label>
+        <input type="date" id="date">
+        <div class="error-msg">Merci de choisir une date.</div>
+      </div>
+      <div class="field" data-field="creneau">
+        <label><span class="glyph">⏰</span> Créneau <span class="req">*</span></label>
+        <select id="creneau">
+          <option value="">— Choisir —</option>
+          <option>Matin (8h - 12h)</option>
+          <option>Après-midi (13h - 16h)</option>
+          <option>Fin de journée (16h - 18h30)</option>
+        </select>
+        <div class="error-msg">Merci de choisir un créneau.</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label><span class="glyph">📝</span> Notes complémentaires</label>
+      <textarea id="notes" placeholder="Précisions utiles : type de décodeur, étage, panne constatée..."></textarea>
+    </div>
+
+    <div class="note">
+      <div class="glyph">ℹ</div>
+      <div>Je suis chargé de réaliser une installation conforme et d'optimiser la réception. Concernant le matériel, il doit être fourni par vos soins ou votre vendeur.</div>
+    </div>
+
+    <div class="note warn">
+      <div class="glyph">⚠</div>
+      <div><strong>Important :</strong> votre créneau est confirmé après réception de l'acompte. En cas d'annulation ou de report, merci de nous prévenir au moins 24h à l'avance.</div>
+    </div>
+
+    <div class="submit-zone">
+      <button type="button" class="send" id="sendBtn">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 6.32A8.86 8.86 0 0 0 12.05 4C7.24 4 3.33 7.91 3.33 12.72c0 1.53.4 3.02 1.16 4.34L3.25 21l3.99-1.22a8.9 8.9 0 0 0 4.8 1.4h.01c4.81 0 8.72-3.91 8.72-8.72a8.7 8.7 0 0 0-3.17-6.14zm-5.55 13.4h-.01a7.4 7.4 0 0 1-3.77-1.03l-.27-.16-2.4.73.72-2.33-.18-.28a7.36 7.36 0 0 1-1.13-3.93c0-4.07 3.32-7.39 7.4-7.39 1.97 0 3.83.77 5.22 2.17a7.33 7.33 0 0 1 2.16 5.23c0 4.08-3.32 7.4-7.34 7.4zm4.05-5.55c-.22-.11-1.31-.65-1.51-.72-.2-.07-.35-.11-.5.11-.15.22-.57.72-.7.87-.13.15-.26.16-.48.05-.22-.11-.94-.35-1.79-1.11-.66-.59-1.11-1.32-1.24-1.54-.13-.22-.01-.34.1-.45.1-.1.22-.26.33-.39.11-.13.15-.22.22-.37.07-.15.04-.28-.02-.39-.06-.11-.5-1.2-.68-1.65-.18-.43-.36-.37-.5-.38-.13-.01-.28-.01-.43-.01s-.39.05-.6.28c-.2.22-.79.77-.79 1.87s.81 2.16.92 2.31c.11.15 1.6 2.44 3.87 3.42.54.23.96.37 1.29.48.54.17 1.03.15 1.42.09.43-.06 1.31-.54 1.5-1.06.18-.51.18-.95.13-1.05-.06-.1-.2-.16-.42-.27z"/></svg>
+        Envoyer ma demande sur WhatsApp
+      </button>
+      <div class="subtext">Vos informations seront transmises directement à Perfect Services TNT.</div>
+    </div>
+
+  </form>
+
+  <div class="footer">
+    <div><span class="gold">Nous contacter</span></div>
+    <div>📞 +225 05 05 72 42 65 · +225 07 07 47 08 33</div>
+    <div>✉️ perfectagenceabobondotre@gmail.com</div>
+    <div>📍 Cocody, Angré 7ème Tranche — Abidjan, Côte d'Ivoire</div>
+    <hr>
+    <div class="tagline">Expertise · Rapidité · Fiabilité — avec Perfect Services TNT, votre tranquillité est assurée !</div>
+  </div>
+
+</div>
+
+<script>
+  const WHATSAPP_NUMBER = "2250707470833"; // format international sans +, sans 0 initial
+
+  const fieldsRequired = ["nom","tel","adresse","service","date","creneau"];
+
+  function clearErrors(){
+    fieldsRequired.forEach(id=>{
+      const wrap = document.querySelector(`.field[data-field="${id}"]`);
+      if(wrap) wrap.classList.remove("invalid");
+    });
+  }
+
+  function validate(){
+    let ok = true;
+    fieldsRequired.forEach(id=>{
+      const el = document.getElementById(id);
+      const wrap = document.querySelector(`.field[data-field="${id}"]`);
+      if(!el.value || el.value.trim()===""){
+        wrap.classList.add("invalid");
+        ok = false;
+      }
+    });
+    return ok;
+  }
+
+  function formatDate(iso){
+    if(!iso) return "";
+    const [y,m,d] = iso.split("-");
+    return `${d}/${m}/${y}`;
+  }
+
+  document.getElementById("sendBtn").addEventListener("click", function(){
+    clearErrors();
+    if(!validate()){
+      document.querySelector(".field.invalid").scrollIntoView({behavior:"smooth", block:"center"});
+      return;
+    }
+
+    const nom = document.getElementById("nom").value.trim();
+    const tel = document.getElementById("tel").value.trim();
+    const adresse = document.getElementById("adresse").value.trim();
+    const service = document.getElementById("service").value;
+    const date = formatDate(document.getElementById("date").value);
+    const creneau = document.getElementById("creneau").value;
+    const notes = document.getElementById("notes").value.trim();
+
+    let message = `*Nouvelle demande de réservation — Perfect Services TNT*%0A%0A`;
+    message += `👤 *Nom :* ${nom}%0A`;
+    message += `📞 *Téléphone :* ${tel}%0A`;
+    message += `📍 *Adresse :* ${adresse}%0A`;
+    message += `🔧 *Service :* ${service}%0A`;
+    message += `📆 *Date souhaitée :* ${date}%0A`;
+    message += `⏰ *Créneau :* ${creneau}%0A`;
+    if(notes){
+      message += `📝 *Notes :* ${notes}%0A`;
+    }
+
+    const encoded = encodeURIComponent(decodeURIComponent(message.replace(/%0A/g,"\n")));
+    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encoded}`;
+
+    document.getElementById("successBanner").style.display = "block";
+    document.getElementById("successBanner").scrollIntoView({behavior:"smooth", block:"center"});
+
+    window.open(url, "_blank");
+  });
+</script>
+
+</body>
+</html>
